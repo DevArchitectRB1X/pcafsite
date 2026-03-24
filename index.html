@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NumeBot - Prezentare & Blog</title>
+    <style>
+        /* CSS Rapid pentru aspect profesional */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #23272a; color: white; margin: 0; }
+        nav { background: #2c2f33; padding: 1rem; display: flex; justify-content: space-around; }
+        .hero { text-align: center; padding: 100px 20px; background: linear-gradient(135deg, #5865F2, #2c2f33); }
+        .btn { background: #5865F2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .section { display: none; } /* Ascundem secțiunile inițial */
+        .active { display: block; } /* Arătăm doar secțiunea activă */
+        .card { background: #2c2f33; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #5865F2; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="#" onclick="showSection('home')" style="color: white; text-decoration: none;">Home</a>
+    <a href="#" onclick="showSection('blog')" style="color: white; text-decoration: none;">Blog</a>
+    <a href="LINK_INVITE_BOT" class="btn">Add to Discord</a>
+</nav>
+
+<div id="home" class="section active">
+    <div class="hero">
+        <h1>🤖 Numele Botului Tău</h1>
+        <p>Cel mai avansat bot de moderare și distracție pentru serverul tău.</p>
+    </div>
+    <div class="container">
+        <h2>Ce știe să facă?</h2>
+        <div class="card"><h3>Moderare</h3><p>Sistem de ban/kick automat.</p></div>
+        <div class="card"><h3>Muzică</h3><p>Calitate audio 4K în voice channels.</p></div>
+    </div>
+</div>
+
+<div id="blog" class="section">
+    <div class="container">
+        <h1>Blog & Update-uri</h1>
+        <div class="card">
+            <h3>Update v1.2 - Sistem de Economie</h3>
+            <p>Postat pe 24 Martie 2026</p>
+            <p>Am adăugat comenzi noi pentru portofel virtual...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript pentru a schimba paginile fără refresh
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
