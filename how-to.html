@@ -8,7 +8,9 @@
         :root { --discord-blurple: #5865F2; --bg: #313338; --card: #2b2d31; }
         body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; }
         .container { max-width: 800px; margin: auto; }
-        
+        html {
+    scroll-behavior: smooth;
+}
         /* Stil pentru Cuprins */
         .toc { 
             background: #1e1f22; 
@@ -87,6 +89,28 @@
     </div>
 
 </div>
+<script>
+    // Selectăm toate link-urile care încep cu #
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault(); // Oprim saltul instantaneu
 
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                // Calculăm poziția cu un mic offset (spațiu de 80px sus)
+                const offset = 80; 
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth' // Aici se întâmplă animația
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>
