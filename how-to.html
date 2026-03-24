@@ -55,14 +55,52 @@
     <h1>Centru de Ajutor PCAF</h1>
 
     <div class="toc">
-        <h2>Cuprins: Despre ce vrei să înveți?</h2>
-        <div class="toc-buttons">
-            <a href="#instalare" class="toc-btn">🚀 Instalare Bot</a>
-            <a href="#fatiuni" class="toc-btn">🏘️ Sistem Facțiuni</a>
-            <a href="#economie" class="toc-btn">💰 Economie</a>
-            <a href="#moderare" class="toc-btn">🛡️ Moderare</a>
+    <h2 style="margin-top: 0; border-bottom: 2px solid var(--discord-blurple); padding-bottom: 10px;">
+        🔍 Ghid de Utilizare PCAF - Cuprins
+    </h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+
+        <div>
+            <h4 style="color: #f1c40f; margin-bottom: 10px;">⚙️ Configurare Initală</h4>
+            <div class="toc-buttons" style="display: flex; flex-direction: column;">
+                <a href="#instalare" class="toc-btn">⚙️ Adăugarea botului pe server</a>
+                <a href="#configurare" class="toc-btn">⚙️ Panou Configurare</a>
+                <a href="#setpermisiuni" class="toc-btn">🔑 Setări Permisiuni</a>
+                <a href="#testintrebari" class="toc-btn">⚙️ Gestionare Întrebări</a>
+                <a href="#functii" class="toc-btn">⚖️ Funcții Logice (True/False)</a>
+            </div>
         </div>
+
+        <div>
+            <h4 style="color: #3498db; margin-bottom: 10px;">📝 Sistem Recrutare</h4>
+            <div class="toc-buttons" style="display: flex; flex-direction: column;">
+                <a href="#addjucator" class="toc-btn">👤 Adăugare Candidat</a>
+                <a href="#listajucatoriacc" class="toc-btn">📋 Listă Candidați</a>
+                <a href="#admiteretest" class="toc-btn">🧪 Admitere Test</a>
+            </div>
+        </div>
+
+        <div>
+            <h4 style="color: #e74c3c; margin-bottom: 10px;">🛡️ Management Membri</h4>
+            <div class="toc-buttons" style="display: flex; flex-direction: column;">
+                <a href="#sanctiune" class="toc-btn">⚖️ Sistem Sancțiuni</a>
+                <a href="#inactivitate" class="toc-btn">⏳ Sistem Inactivitate</a>
+                <a href="#invoirems" class="toc-btn">🏥 Învoiri Tip M.S.</a>
+            </div>
+        </div>
+
+        <div>
+            <h4 style="color: #5865F2; margin-bottom: 10px;">📊 Informații Generale</h4>
+            <div class="toc-buttons" style="display: flex; flex-direction: column;">
+                <a href="#history" class="toc-btn">📜 Istoric Jucător</a>
+                <a href="#membri" class="toc-btn">👥 Listă Membri</a>
+                <a href="#lista-comenzi" class="toc-btn">📋 Index Complet Comenzi</a>
+            </div>
+        </div>
+
     </div>
+</div>
 
     <div id="instalare" class="guide-section">
         <h2>🚀 Cum instalezi botul</h2>
@@ -70,17 +108,572 @@
         <ol>
             <li>Apasă butonul de "Invite" de pe pagina principală.</li>
             <li>Selectează serverul dorit.</li>
-            <li>Acordă permisiunea <code>ADMINISTRATOR</code>.</li>
+            <li>Acordă permisiunea <code>ADMINISTRATOR</code> cand vrei sa il bagi pe server.</li>
+            <li>Felicitari! Bot-ul se afla pe server, acum trebuie sa il configuram</li>
         </ol>
         <a href="#" class="back-to-top">↑ Sus la cuprins</a>
     </div>
 
-    <div id="fatiuni" class="guide-section">
-        <h2>🏘️ Sistemul de Facțiuni</h2>
-        <p>Acest sistem permite liderilor să gestioneze membrii direct prin Discord.</p>
-        <p>Comanda principală este <code>/f-menu</code>. De aici poți da invite, uninvite sau să schimbi rank-ul unui jucător.</p>
-        <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+    <div id="inactivitate" class="guide-section">
+    <h2>⏳ Sistem Inactivitate</h2>
+    <p>Această funcționalitate este esențială pentru menținerea unei facțiuni active, permițând monitorizarea jucătorilor care lipsesc.</p>
+    
+    <div style="background: #1e1f22; padding: 15px; border-radius: 5px; border-left: 4px solid #f1c40f; margin-bottom: 20px;">
+        <strong>Comandă principală:</strong> <code>/inactivitate (tag discord) (timp ramas)</code>
     </div>
+
+    <h3>📖 Funcționalitate:</h3>
+    <p>Dacă un jucător se apropie de limita de inactivitate, poți seta un <b>countdown</b> până la o oră stabilită. La folosirea comenzii, membrul vizat primește un avertisment că va fi demis dacă nu intră până la ora X.</p>
+    
+    <p>Când timpul expiră, bot-ul va trimite un mesaj pe canalul de anunțuri configurat, oferind două opțiuni (butoane):</p>
+    <ul>
+        <li><strong>A intrat:</strong> Bot-ul confirmă prezența cu un reply la întrebarea pusă.</li>
+        <li><strong>Nu a intrat:</strong> Bot-ul pornește automat procesul de demitere a jucătorului.</li>
+    </ul>
+
+    <div style="background: rgba(88, 101, 242, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed var(--discord-blurple);">
+        <h3>⚠️ Important:</h3>
+        <ul style="margin-bottom: 0;">
+            <li>Chiar dacă ai selectat deja o opțiune, <strong>butoanele rămân active</strong> și bot-ul va acționa conform ultimei decizii apăsate!</li>
+            <!-- <li><strong>Acces public:</strong> Orice utilizator care are acces la canalul respectiv poate apăsa butoanele.</li> -->
+            <li><strong>Permisiuni:</strong> Orice Tester sau Co-Lider poate folosi comanda/butoanele, cu condiția să aibă permisiunea de <code>demite</code> în sistemul botului.</li>
+        </ul>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="invoirems" class="guide-section">
+    <h2>🏥 Învoire Tip M.S.</h2>
+    <p>Comanda <code>/invoirems</code> este utilizată pentru a acorda protecție membrilor care nu pot efectua raportul de activitate din motive speciale sau medicale.</p>
+
+    <div style="background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #2ecc71; margin-bottom: 20px;">
+        <h3>✨ Funcționalitate:</h3>
+        <p>Odată ce un membru primește învoire de tip <b>M.S.</b>, sistemul botului îl va proteja automat. Acesta <strong>nu poate primi</strong> sancțiuni de tip <code>FW</code> (Faction Warning), <code>AV</code> (Avertisment) sau <code>Amendă</code> pentru orice motiv care conține cuvântul <b>"raport"</b>.</p>
+    </div>
+
+    <h3>⌨️ Sintaxa Comenzii:</h3>
+    <p>Pentru a rula comanda corect, trebuie să completați următoarele argumente:</p>
+    
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace;">
+        <span style="color: #5865F2;">/invoirems</span> 
+        <span style="color: #f1c40f;">[Nume/Tag]</span> 
+        <span style="color: #e67e22;">[Zile]</span> 
+        <span style="color: #95a5a6;">[Motiv]</span>
+    </div>
+
+    <ul style="margin-top: 15px;">
+        <li><strong>Nume:</strong> Menționați jucătorul folosind simbolul <code>@</code> (tag).</li>
+        <li><strong>Zile:</strong> Introduceți numărul de zile pentru care este valabilă învoirea (ex: 7).</li>
+        <li><strong>Motiv:</strong> Explicația pentru care se acordă această scutire (ex: Probleme medicale).</li>
+    </ul>
+
+    <div style="background: #2b2d31; padding: 10px; border: 1px solid #444; border-radius: 5px; font-size: 0.9rem;">
+        <p>💡 <b>Exemplu:</b> <code>/invoirems @Popescu 3 Probleme de sănătate</code></p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="history" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>📜 Istoric Sancțiuni (History)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 06/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(88, 101, 242, 0.05); padding: 15px; border-radius: 8px; border: 1px solid #444; margin-bottom: 20px;">
+        <h3>🔍 Funcționalitate:</h3>
+        <p>Această comandă extrage din baza de date <b>istoricul complet</b> de sancțiuni al unui jucător. Vei putea vedea cronologic fiecare penalizare primită, de la prima intrare în facțiune și până în prezent.</p>
+        <p>Este instrumentul ideal pentru a decide dacă un membru merită o promovare sau dacă abaterile sale sunt prea dese.</p>
+    </div>
+
+    <h3>⌨️ Sintaxa Comenzii:</h3>
+    <p>Comanda este simplă și necesită un singur argument:</p>
+    
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace; border-left: 4px solid var(--discord-blurple);">
+        <span style="color: #5865F2;">/history</span> 
+        <span style="color: #f1c40f;">[Nume/Tag Jucător]</span>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #2b2d31; border-radius: 8px;">
+        <p style="margin: 0; font-size: 0.9rem; color: #b5bac1;">
+            💡 <b>Notă:</b> Rezultatul va fi afișat într-un format de listă (Embed), conținând tipul sancțiunii, data și motivul acesteia.
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="sanctiune" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>⚖️ Sistem Sancțiuni</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 06/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <p>Comanda <code>/sanctiune</code> permite penalizarea membrilor cu AV, Amendă sau FW, trimițând automat o notificare în privat (DM) jucătorului sancționat. Necesită permisiunea specială: <code>sanctiune</code>.</p>
+
+    <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c; margin-bottom: 25px;">
+        <h3>⚙️ Sisteme Integrate:</h3>
+        <ul style="list-style-type: '👉 '; padding-left: 20px;">
+            <li><strong>Notificare Expirare:</strong> Anunță automat pe canalul de configurare când o sancțiune a expirat.</li>
+            <li><strong>Sistem de Stacking:</strong> Dacă un jucător primește un al doilea FW în interval de 2 zile de la primul, durata celui de-al doilea se recalculează (expiră la 7 zile după primul).</li>
+            <li><strong>Auto-Demitere & Conversie:</strong> 
+                <ul>
+                    <li>3/3 FW-uri = <b>Demitere Automată</b>.</li>
+                    <li>2/2 AV-uri = <b>Acordare Automată 1 FW</b>.</li>
+                </ul>
+            </li>
+            <li><strong>Sincronizare Istoric:</strong> Toate datele apar instant în <code>/history</code> și <code>/finfo</code>.</li>
+        </ul>
+    </div>
+
+    <h3>⌨️ Sintaxa Comenzii:</h3>
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace; border-left: 4px solid #e74c3c; margin-bottom: 15px;">
+        <span style="color: #5865F2;">/sanctiune</span> 
+        <span style="color: #f1c40f;">[membru]</span> 
+        <span style="color: #2ecc71;">[tip]</span> 
+        <span style="color: #e67e22;">[motiv]</span> 
+        <span style="color: #9b59b6;">[valoare_amenda]*</span>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem;">
+        <tr style="border-bottom: 1px solid #444;">
+            <th style="text-align: left; padding: 8px;">Parametru</th>
+            <th style="text-align: left; padding: 8px;">Descriere</th>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><code>membru</code></td>
+            <td style="padding: 8px;">Tag la jucătorul sancționat (obligatoriu).</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><code>tip</code></td>
+            <td style="padding: 8px;">Selectează AV, Amendă sau FW (obligatoriu).</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><code>motiv</code></td>
+            <td style="padding: 8px;">Motivul clar al sancțiunii (obligatoriu).</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><code>valoare_amenda</code></td>
+            <td style="padding: 8px;">Doar cifre (ex: 500000). Obligatoriu doar la tipul "Amendă".</td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 25px; padding: 15px; background: #2b2d31; border-radius: 8px; border-top: 2px solid #95a5a6;">
+        <p style="margin: 0; font-size: 0.9rem;">
+            🔍 <b>Alte detalii:</b> Dacă o sancțiune a fost acordată din greșeală, aceasta poate fi anulată folosind comanda <code>/scoatesanctiune</code>.
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="membri" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>👥 Listă Membri (Members)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 05/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(46, 204, 113, 0.05); padding: 15px; border-radius: 8px; border: 1px solid #2ecc71; margin-bottom: 20px;">
+        <h3>📋 Funcționalitate:</h3>
+        <p>Comanda <code>/membri</code> este accesibilă <b>oricărui membru</b> din facțiune, indiferent de rank. Aceasta generează o listă actualizată în timp real cu toți colegii de facțiune.</p>
+    </div>
+
+    <h3>🔍 Informații Afișate:</h3>
+    <p>Pentru fiecare jucător din listă, bot-ul va extrage următoarele date:</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #5865F2;">
+            <span style="font-size: 1.2rem;">👤</span><br>
+            <strong>Nume</strong>
+        </div>
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #f1c40f;">
+            <span style="font-size: 1.2rem;">🎖️</span><br>
+            <strong>Rank</strong>
+        </div>
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #e67e22;">
+            <span style="font-size: 1.2rem;">📅</span><br>
+            <strong>Zile</strong>
+        </div>
+    </div>
+
+    <div style="margin-top: 25px; padding: 15px; background: #2b2d31; border-radius: 8px; font-style: italic; color: #b5bac1;">
+        <p style="margin: 0; font-size: 0.9rem;">
+            📌 <b>Sfat:</b> Folosește această comandă pentru a vedea cine urmează să primească Rank Up (verificând zilele) sau pentru a vedea cine este liderul/co-liderul online.
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="setpermisiuni" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>🔑 Configurare Permisiuni (SetPerms)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 05/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(241, 196, 15, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #f1c40f; margin-bottom: 25px;">
+        <h3>⚠️ Atenție Maximă!</h3>
+        <p>Aceasta este <b>cea mai importantă comandă</b> a botului. Permite definirea accesului pentru gradele: <code>Lider</code>, <code>Co-Lider</code> și <code>Tester</code>.</p>
+        <p style="color: #e74c3c; font-weight: bold;">Recomandare: Nu oferiți acces la această comandă Co-Liderilor sau Testerilor, deoarece aceștia își pot modifica propriile permisiuni sau pe cele ale gradelor superioare!</p>
+    </div>
+
+    <h3>📖 Mod de funcționare:</h3>
+    <p>La rularea comenzii, trebuie să specificați gradul vizat și să setați valorile booleane pentru fiecare permisiune în parte:</p>
+    
+    <table style="width: 100%; border-collapse: collapse; background: #1e1f22; border-radius: 8px; overflow: hidden;">
+        <tr style="background: #2b2d31;">
+            <th style="padding: 12px; text-align: left;">Valoare</th>
+            <th style="padding: 12px; text-align: left;">Efect</th>
+        </tr>
+        <tr>
+            <td style="padding: 10px; color: #2ecc71; font-weight: bold;">True</td>
+            <td style="padding: 10px;">Activează accesul la comanda respectivă.</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; color: #e74c3c; font-weight: bold;">False</td>
+            <td style="padding: 10px;">Dezactivează/Interzice accesul la comanda respectivă.</td>
+        </tr>
+    </table>
+
+    <h3 style="margin-top: 25px;">⌨️ Sintaxa Comenzii:</h3>
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace; border-left: 4px solid #f1c40f;">
+        <span style="color: #5865F2;">/setpermisiuni</span> 
+        <span style="color: #f1c40f;">[grad]</span> 
+        <span style="color: #2ecc71;">[permisiune_1: True/False]</span> 
+        <span style="color: #2ecc71;">[permisiune_2: True/False]...</span>
+    </div>
+
+    <div style="margin-top: 25px; padding: 15px; background: #2b2d31; border-radius: 8px; border-top: 2px solid #e74c3c;">
+        <p style="margin: 0; font-size: 0.9rem;">
+            🚫 <b>Important pentru Lideri:</b> Aveți grijă să NU vă scoateți singuri accesul (setând <code>False</code>) la propria comandă de <code>/setpermisiuni</code>, altfel nu veți mai putea modifica nimic ulterior!
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="listajucatoriacc" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>📝 Listă Jucători Acceptați</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 05/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(155, 89, 182, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #9b59b6; margin-bottom: 20px;">
+        <h3>📋 Funcționalitate:</h3>
+        <p>Comanda <code>/listajucatoriacc</code> generează o listă detaliată cu toți candidații care au fost acceptați pentru a susține testele de intrare în facțiune. Este un instrument vital pentru coordonarea echipei de Testeri.</p>
+        <p><strong>Permisiune necesară:</strong> <code>listajucatoriacc</code></p>
+    </div>
+
+    <h3>🔍 Detalii afișate în Reply:</h3>
+    <p>Odată executată, comanda va returna un mesaj (Embed) conținând următoarele coloane de informații:</p>
+    
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; border-left: 4px solid #9b59b6;">
+        <ul style="list-style-type: '🔹 '; padding-left: 10px; margin: 0;">
+            <li><strong>Numele de pe joc:</strong> Nickname-ul utilizat pe serverul de SA:MP/GTA.</li>
+            <li><strong>Nume Discord:</strong> Numele de utilizator (dacă a fost furnizat în aplicație).</li>
+            <li><strong>Tag Discord:</strong> Mențiunea directă a contului (pentru contact rapid).</li>
+            <li><strong>Status Test:</strong> Indică dacă jucătorul a susținut deja probele sau este în așteptare.</li>
+            <li><strong>Data Limită:</strong> Termenul până la care candidatul mai poate susține testele.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #2b2d31; border-radius: 8px;">
+        <p style="margin: 0; font-size: 0.9rem; color: #b5bac1;">
+            💡 <b>Info:</b> Comanda nu necesită argumente suplimentare (se scrie simplu <code>/listajucatoriacc</code>).
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="admiteretest" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>📝 Admitere Test (Exam System)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 05/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #3498db; margin-bottom: 20px;">
+        <h3>⚙️ Funcționalitate:</h3>
+        <p>Comanda <code>/admiteretest</code> inițiază procesul de examinare pentru un candidat acceptat. Sistemul extrage automat întrebări <b>aleatorii</b> din baza de date, astfel încât fiecare test să fie unic.</p>
+        <p><strong>Permisiune necesară:</strong> <code>admiteretest</code></p>
+    </div>
+
+    <h3>🛡️ Reguli de Securitate și Utilizare:</h3>
+    <ul>
+        <li><strong>Locație:</strong> Comanda poate fi executată <b>doar</b> pe canalul specificat în configurația botului.</li>
+        <li><strong>Limitare:</strong> Un jucător poate susține testul <b>o singură dată</b>. Botul va bloca orice tentativă de a repeta comanda pe același nume.</li>
+        <li><strong>Status:</strong> Imediat după folosirea comenzii, jucătorul este marcat automat ca "Test Susținut" în baza de date.</li>
+    </ul>
+
+    <h3>⌨️ Sintaxa Comenzii:</h3>
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace; border-left: 4px solid #3498db; margin-bottom: 15px;">
+        <span style="color: #5865F2;">/admiteretest</span> 
+        <span style="color: #f1c40f;">[Nume Jucător]</span>
+    </div>
+
+    <div style="background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 5px; border: 1px solid #e74c3c; font-size: 0.9rem;">
+        ⚠️ <b>Atenție:</b> Numele introdus trebuie să fie <b>identic</b> cu cel care apare în lista de jucători acceptați (<code>/listajucatoriacc</code>).
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="testintrebari" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>⚙️ Management Întrebări Test</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 04/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <p>Comanda <code>/testintrebari</code> este utilizată pentru a gestiona baza de date cu întrebări și răspunsuri folosite în sistemul de admitere automată.</p>
+
+    <div style="background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #2ecc71; margin-bottom: 20px;">
+        <h3>➕ /testintrebari adauga</h3>
+        <p>Adaugă o întrebare nouă în lista pentru admitere.</p>
+        <p><strong>Sintaxă:</strong> <code>/testintrebari adauga [intrebare] [raspuns]</code></p>
+        <p><strong>Permisiune:</strong> <code>adauga_intrebare</code></p>
+    </div>
+
+    <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c; margin-bottom: 20px;">
+        <h3>➖ /testintrebari scoate</h3>
+        <p>Elimină o întrebare existentă folosind indexul acesteia.</p>
+        <p><strong>Sintaxă:</strong> <code>/testintrebari scoate [numar]</code></p>
+        <p><strong>Permisiune:</strong> <code>scoate_intrebare</code></p>
+        <p>💡 <i>Numărul întrebării se află folosind comanda <a href="#listaintrebari" style="color: #5865F2;">/listaintrebari</a>.</i></p>
+    </div>
+
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; border: 1px dashed #f1c40f;">
+        <h3 style="color: #f1c40f; margin-top: 0;">⚠️ Regula de Aur (Configurare):</h3>
+        <p>Asigurați-vă că numărul de întrebări setat în <code>/configurare</code> este <b>mai mic sau egal</b> cu numărul total de întrebări introduse în bot.</p>
+        <p style="font-size: 0.9rem; color: #b5bac1;">Exemplu: Dacă în config ai setat că testul are 10 întrebări, trebuie să ai minim 10 întrebări adăugate în sistem, altfel botul nu va putea genera testul!</p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="addjucator" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>👤 Adăugare Candidat (Add Jucător)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 04/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #3498db; margin-bottom: 20px;">
+        <h3>⚙️ Funcționalitate:</h3>
+        <p>Comanda <code>/addjucator</code> înregistrează un candidat nou în baza de date a botului pentru a putea susține testele de admitere. Fără acest pas, botul nu va recunoaște jucătorul în comenzile ulterioare.</p>
+        <p><strong>Permisiune necesară:</strong> <code>addjucator</code></p>
+    </div>
+
+    <h3>⌨️ Sintaxa Comenzii:</h3>
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; font-family: monospace; border-left: 4px solid #3498db; margin-bottom: 15px;">
+        <span style="color: #5865F2;">/addjucator</span> 
+        <span style="color: #e74c3c;">[nume]</span> 
+        <span style="color: #95a5a6;">[tag]</span> 
+        <span style="color: #95a5a6;">[namedis]</span>
+    </div>
+
+    <ul style="list-style: none; padding-left: 0;">
+        <li style="margin-bottom: 10px;">
+            <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; font-weight: bold;">OBLIGATORIU</span> 
+            <b>nume:</b> Numele de pe serverul de joc (ex: Popescu_Ion).
+        </li>
+        <li style="margin-bottom: 10px;">
+            <span style="background: #95a5a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; font-weight: bold;">OPȚIONAL</span> 
+            <b>tag:</b> Tag-ul de Discord (@utilizator) sau ID-ul contului, dacă se află pe server.
+        </li>
+        <li style="margin-bottom: 10px;">
+            <span style="background: #95a5a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; font-weight: bold;">OPȚIONAL</span> 
+            <b>namedis:</b> Numele scris de pe Discord (ex: ionut#1234).
+        </li>
+    </ul>
+
+    <div style="background: #2b2d31; padding: 15px; border-radius: 8px; border-top: 2px solid #3498db; margin-top: 20px;">
+        <p style="margin: 0; font-size: 0.9rem; color: #b5bac1;">
+            💡 <b>De ce este esențială?</b> Această comandă "deschide" profilul temporar al jucătorului. Dacă nu este adăugat aici, comenzile <code>/admiteretest</code> sau <code>/listajucatoriacc</code> nu vor funcționa pentru el.
+        </p>
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="configurare" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>⚙️ Panou Configurare (Settings)</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 04/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c; margin-bottom: 25px;">
+        <h3 style="color: #e74c3c; margin-top: 0;">🛡️ Securitate & Ierarhie</h3>
+        <p>Comanda necesită permisiunea <code>setari</code>. <b>Atenție:</b> Nu oferiți acces testerilor/co-liderilor deoarece pot prelua controlul total asupra permisiunilor!</p>
+        <p>⚠️ <b>IMPORTANT:</b> Rolul botului pe Discord trebuie să fie poziționat <b>deasupra</b> tuturor rolurilor de membru/rank pentru a putea acorda sau scoate gradele corect.</p>
+    </div>
+
+    <div style="display: grid; gap: 20px;">
+
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; border-left: 4px solid #5865F2;">
+            <h4 style="margin: 0 0 10px 0; color: #5865F2;">1. 📺 Canale de Anunțuri</h4>
+            <p style="font-size: 0.9rem;">Setează canalul unde botul va trimite notificări automate pentru:</p>
+            <ul style="font-size: 0.85rem; color: #b5bac1;">
+                <li>Expirare timp teste (candidați acceptați).</li>
+                <li>Expirare sancțiuni (FW/AV).</li>
+                <li>Avertismente plată amenzi (conversie automată în FW).</li>
+                <li>Expirare învoiri (cu excepția M.S.).</li>
+            </ul>
+        </div>
+
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; border-left: 4px solid #f1c40f;">
+            <h4 style="margin: 0 0 10px 0; color: #f1c40f;">2. 👑 Roluri Conducere</h4>
+            <p style="font-size: 0.9rem;">Definește ierarhia (maxim un rol per categorie):</p>
+            <ul style="font-size: 0.85rem; color: #b5bac1;">
+                <li><b>Lider:</b> Setat automat la activare.</li>
+                <li><b>Co-Lider:</b> Selectează rolul de mână dreaptă.</li>
+                <li><b>Tester:</b> Selectează rolul celor care dau testele.</li>
+            </ul>
+        </div>
+
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; border-left: 4px solid #e67e22;">
+            <h4 style="margin: 0 0 10px 0; color: #e67e22;">3 & 4. 🏷️ Rank-uri & Format Nickname</h4>
+            <p style="font-size: 0.9rem;">Configurează cum vor apărea membrii pe server:</p>
+            <p style="font-size: 0.85rem; background: #2b2d31; padding: 10px; border-radius: 5px;">
+                Folosește placeholder-ele: <br>
+                <code>{nume}</code> - Numele jucătorului <br>
+                <code>{rank_nume}</code> - Numele rank-ului setat la categoria 3.
+            </p>
+        </div>
+
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; border-left: 4px solid #9b59b6;">
+            <h4 style="margin: 0 0 10px 0; color: #9b59b6;">5. 📝 Sistem Admitere</h4>
+            <p style="font-size: 0.9rem;">Setările fluxului de recrutare:</p>
+            <ul style="font-size: 0.85rem; color: #b5bac1;">
+                <li><b>Canal:</b> Unde se poate scrie <code>/admiteretest</code>.</li>
+                <li><b>Roluri ADD:</b> Ce primește membrul la admitere (multi-select).</li>
+                <li><b>Roluri REMOVE:</b> Ce i se scoate (ex: rolul de civil/aplicație).</li>
+                <li><b>Nr. Întrebări:</b> Câte întrebări random primește candidatul.</li>
+            </ul>
+        </div>
+
+        <div style="background: #1e1f22; padding: 15px; border-radius: 8px; border-left: 4px solid #2ecc71;">
+            <h4 style="margin: 0 0 10px 0; color: #2ecc71;">6. 📈 Configurare Rankup</h4>
+            <p style="font-size: 0.9rem;">Gestionează automatizarea rolurilor la avansare:</p>
+            <p style="font-size: 0.85rem; color: #b5bac1;">Alegi rank-ul (1-5/6) și setezi exact ce roluri să primească și ce roluri de la rank-ul anterior să fie eliminate.</p>
+        </div>
+
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="functii" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>⚙️ Configurare Funcții Logice</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Postat: 08/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <p>Aceste setări definesc fluxul de lucru al botului. Ele decid dacă anumite procese sunt obligatorii sau pot fi sărite.</p>
+
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; border-top: 4px solid #5865F2; margin-bottom: 25px;">
+        <h3 style="margin-top: 0; color: #5865F2;">🧪 admiteretest</h3>
+        <p>Decide dacă testul teoretic (întrebări/răspunsuri) este obligatoriu pentru intrarea în facțiune.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+            <div style="border: 1px solid #2ecc71; padding: 10px; border-radius: 5px;">
+                <b style="color: #2ecc71;">✅ True:</b> Orice candidat trebuie să susțină și să treacă testul prin <code>/admiteretest</code> înainte de a fi acceptat.
+            </div>
+            <div style="border: 1px solid #e74c3c; padding: 10px; border-radius: 5px;">
+                <b style="color: #e74c3c;">❌ False:</b> Candidații pot fi admiși direct, fără a mai trece prin sistemul de întrebări aleatorii.
+            </div>
+        </div>
+    </div>
+
+    <div style="background: #1e1f22; padding: 20px; border-radius: 8px; border-top: 4px solid #f1c40f;">
+        <h3 style="margin-top: 0; color: #f1c40f;">📋 obligatie_addjucator_admitere</h3>
+        <p>Decide dacă jucătorul trebuie să fie pre-înregistrat în baza de date.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+            <div style="border: 1px solid #2ecc71; padding: 10px; border-radius: 5px;">
+                <b style="color: #2ecc71;">✅ True:</b> Jucătorul <b>trebuie</b> să fie adăugat întâi prin <code>/addjucator</code> pentru a putea fi admis ulterior.
+            </div>
+            <div style="border: 1px solid #e74c3c; padding: 10px; border-radius: 5px;">
+                <b style="color: #e74c3c;">❌ False:</b> Jucătorul poate fi admis direct folosind numele de pe server, fără evidență prealabilă.
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 25px; padding: 15px; background: rgba(88, 101, 242, 0.1); border-radius: 8px; font-size: 0.9rem; border: 1px dashed var(--discord-blurple);">
+        💡 <b>Sfat de administrare:</b> Pentru un server organizat (Hard Roleplay sau facțiuni serioase), se recomandă setarea ambelor funcții pe <code>True</code>.
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
+
+<div id="lista-comenzi" class="guide-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>📋 Index Complet Comenzi</h2>
+        <span style="font-size: 0.8rem; color: #949ba4;">Ultima actualizare: 04/02/2026 | Autor: <b>DevArchitect</b></span>
+    </div>
+
+    <p>O privire de ansamblu asupra tuturor interacțiunilor disponibile în botul PCAF, grupate pe responsabilități.</p>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px;">
+        
+        <div style="background: #1e1f22; border-radius: 8px; overflow: hidden; border: 1px solid #f1c40f;">
+            <div style="background: #f1c40f; color: #000; padding: 10px; font-weight: bold;">⚙️ Configurare & Setup</div>
+            <div style="padding: 15px;">
+                <code style="display: block; margin-bottom: 5px;">/activate</code> <small>Înscrie serverul în baza de date PCAF.</small><br>
+                <code style="display: block; margin-bottom: 5px;">/configurare</code> <small>Setări canale, roluri și formate.</small><br>
+                <code style="display: block; margin-bottom: 5px;">/testintrebari adauga/scoate</code> <small>Gestionare bază date examene.</small><br>
+                <code style="display: block; margin-bottom: 5px;">/setpermisiuni</code> <small>Control acces Lider/Co-Lider/Tester.</small>
+            </div>
+        </div>
+
+        <div style="background: #1e1f22; border-radius: 8px; overflow: hidden; border: 1px solid #e74c3c;">
+            <div style="background: #e74c3c; color: #fff; padding: 10px; font-weight: bold;">🛡️ Administrare Membri</div>
+            <div style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <code>/sanctiune</code><br>
+                    <code>/demite</code><br>
+                    <code>/achitare</code><br>
+                    <code>/rankup</code><br>
+                    <code>/invoire</code><br>
+                    <code>/invoirems</code>
+                </div>
+                <div>
+                    <code>/scoatesanctiune</code><br>
+                    <code>/admiteretest</code><br>
+                    <code>/admitere</code><br>
+                    <code>/respingere</code><br>
+                    <code>/listajucatoriacc</code><br>
+                    <code>/addjucator</code>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: #1e1f22; border-radius: 8px; overflow: hidden; border: 1px solid #5865F2;">
+            <div style="background: #5865F2; color: #fff; padding: 10px; font-weight: bold;">📊 Informații & Utilitare</div>
+            <div style="padding: 15px;">
+                <code>/finfo</code> — <small>Informații generale despre facțiune.</small><br>
+                <code>/history</code> — <small>Vezi trecutul unui jucător.</small><br>
+                <code>/membri</code> — <small>Lista live a membrilor online/offline.</small><br>
+                <code>/listaintrebari</code> — <small>Afișează toate întrebările setate.</small>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+    <a href="#" class="back-to-top">↑ Sus la cuprins</a>
+</div>
 
     <div id="economie" class="guide-section">
         <h2>💰 Sistemul de Economie</h2>
