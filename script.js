@@ -10,6 +10,18 @@ function loginWithDiscord() {
     window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scope}`;
 }
 
+async function selectServer(serverId, serverName) {
+    // 1. Salvăm ID-ul și Numele serverului în memoria browserului
+    localStorage.setItem('selectedServerId', serverId);
+    localStorage.setItem('selectedServerName', serverName);
+
+    // 2. Redirecționăm către noua pagină
+    window.location.href = 'dashboard.html';
+}
+
+// Asigură-te că în fetchGuilds ai:
+// card.onclick = () => selectServer(guild.id, guild.name);
+
 // Verificăm dacă ne-am întors din login cu un token în URL
 window.onload = () => {
     const fragment = new URLSearchParams(window.location.hash.slice(1));
@@ -28,6 +40,7 @@ async function fetchGuilds(token) {
     });
     const guilds = await response.json();
     const list = document.getElementById('guilds-list');
+    card.onclick = () => selectServer(guild.id, guild.name);
 
     guilds.forEach(guild => {
         // Filtrăm serverele unde utilizatorul are permisiuni de admin (0x8)

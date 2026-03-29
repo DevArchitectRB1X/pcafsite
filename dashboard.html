@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>PCAF - Dashboard Server</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body style="background: #313338; color: white; font-family: sans-serif; padding: 40px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 id="db-title">Încărcare server...</h1>
+        <a href="index.html" style="color: #949ba4; text-decoration: none;">← Înapoi la listă</a>
+    </div>
+
+    <hr style="border: 1px solid #444; margin: 20px 0;">
+
+    <div id="loading">Se descarcă datele din baza de date...</div>
+
+    <div id="content" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+            
+            <div style="background: #1e1f22; padding: 20px; border-radius: 8px;">
+                <h3>⚙️ Configurare Facțiune</h3>
+                <div id="config-data"></div>
+            </div>
+
+            <div style="background: #1e1f22; padding: 20px; border-radius: 8px;">
+                <h3>👥 Listă Membri Activi</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 1px solid #444;">
+                            <th style="padding: 10px;">Nume</th>
+                            <th>Rank</th>
+                            <th>FW</th>
+                        </tr>
+                    </thead>
+                    <tbody id="members-table"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const serverId = localStorage.getItem('selectedServerId');
+        const serverName = localStorage.getItem('selectedServerName');
+
+        if (!serverId) {
+            window.location.href = 'index.html'; // Siguranță: dacă nu e selectat nimic, trimite înapoi
+        }
+
+        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+
+        async function loadDashboard() {
+            try {
+                // Fetch direct din Firebase-ul tău folosind ID-ul serverului
+                const response = await fetch(`https://pcaf-7f566-default-rtdb.firebaseio.com/${serverId}.json`);
+                const data = await response.json();
+
+                if (!data) {
+                    document.getElementById('loading').innerHTML = "❌ Serverul nu este înregistrat în baza de date PCAF.";
+                    return;
+                }
+
+                // 1. Afișăm Configurația
+                const configBox = document.getElementById('config-data');
+                configBox.innerHTML = `
+                    <p>Tag Facțiune: <b>${data.Configurare?.Tag || 'N/A'}</b></p>
+                    <p>Membri Max: <b>${data.Configurare?.MaxMembri || 'N/A'}</b></p>
+                    <p>Lider ID: <code>${data.Configurare?.Roluri?.Lider || 'Nespecificat'}</code></p>
+                `;
+
+                // 2. Afișăm Membrii (dacă există nodul Membri în JSON-ul tău)
+                const table = document.getElementById('members-table');
+                if (data.Membri) {
+                    Object.keys(data.Membri).forEach(key => {
+                        const m = data.Membri[key];
+                        table.innerHTML += `
+                            <tr style="border-bottom: 1px solid #2b2d31;">
+                                <td style="padding: 10px;">${m.Nume || key}</td>
+                                <td>Rank ${m.Rank || 1}</td>
+                                <td style="color: #e74c3c;">${m.FW || 0}/3</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    table.innerHTML = "<tr><td colspan='3'>Nu sunt membri înregistrați.</td></tr>";
+                }
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerText = "Eroare la comunicarea cu Firebase.";
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
