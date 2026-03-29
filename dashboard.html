@@ -36,58 +36,96 @@
 
     <script>
         const serverId = localStorage.getItem('selectedServerId');
-        const serverName = localStorage.getItem('selectedServerName');
-        const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
+const serverName = localStorage.getItem('selectedServerName');
+const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
 
-        if (!serverId) window.location.href = 'index.html';
-        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+if (!serverId) window.location.href = 'index.html';
+document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
 
-        async function loadDashboard() {
-            try {
-                const response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
-                const data = await response.json();
+async function loadDashboard() {
+    try {
+        const response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
+        let data = await response.json();
 
-                if (!data || !data.membri_activi) {
-                    document.getElementById('loading').innerHTML = "❌ Nu s-au găsit date pentru acest server.";
-                    return;
-                }
-
-                // 1. Convertim obiectul în Array
-                const listaMembri = Object.keys(data.membri_activi).map(id => ({
-                    id: id,
-                    ...data.membri_activi[id]
-                }));
-
-                // 2. Sortăm numeric (curățăm textul "days")
-                listaMembri.sort((a, b) => {
-                    const cleanDays = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
-                    return cleanDays(b.Zile) - cleanDays(a.Zile);
-                });
-
-                // 3. Afișăm în tabel
-                const table = document.getElementById('members-table');
-                table.innerHTML = '';
-                
-                listaMembri.forEach(m => {
-                    table.innerHTML += `
-                        <tr style="border-bottom: 1px solid #2b2d31;">
-                            <td style="padding: 15px;"><b>${m.nume_joc || 'Necunoscut'}</b></td>
-                            <td><span style="background: #5865f2; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">Rank ${m.rank || 1}</span></td>
-                            <td style="text-align: center; color: #f1c40f; font-weight: bold;">${m.zile_factiune || '0 days'}</td>
-                        </tr>
-                    `;
-                });
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').innerText = "❌ Eroare la conectarea cu Firebase.";
-            }
+        // Dacă datele nu sunt direct în rădăcină, verificăm sub-nodul 'servers'
+        if (!data) {
+            const retry = await fetch(`${FIREBASE_BASE_URL}/${serverId}.json`);
+            data = await retry.json();
         }
 
-        loadDashboard();
+        if (!data || !data.Membri) {
+            document.getElementById('loading').innerHTML = "❌ Nu s-au găsit membri în baza de date.";
+            return;
+        }
+
+        // 1. Transformăm obiectul Firebase în Listă
+        const listaMembri = Object.keys(data.Membri).map(id => {
+            return {
+                id: id,
+                ...data.Membri[id]
+            };
+        });
+
+        // 2. FUNCȚIA DE SORTARE (Rank + Zile)
+        listaMembri.sort((a, b) => {
+            // Curățăm Zilele (scoatem doar numărul din "13 days")
+            const getZile = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
+            // Curățăm Rank-ul (scoatem doar numărul din "Rank 4")
+            const getRank = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
+
+            const rankA = getRank(a.Rank);
+            const rankB = getRank(b.Rank);
+            const zileA = getZile(a.Zile);
+            const zileB = getZile(b.Zile);
+
+            // PRIORITATE 1: Rank (Cei cu rank mai mare sus)
+            if (rankB !== rankA) {
+                return rankB - rankA;
+            }
+            // PRIORITATE 2: Zile (Dacă au același rank, cel mai vechi e sus)
+            return zileB - zileA;
+        });
+
+        // 3. Afișare în Tabel
+        const table = document.getElementById('members-table');
+        table.innerHTML = '';
+        
+        listaMembri.forEach(m => {
+            // Calculăm culoarea în funcție de FW
+            const fwColor = m.FW >= 2 ? '#ff4757' : (m.FW == 1 ? '#ffa502' : '#2ed573');
+            
+            table.innerHTML += `
+                <tr style="border-bottom: 1px solid #2b2d31; height: 60px;">
+                    <td style="padding: 10px;">
+                        <div style="font-weight: bold; color: white;">${m.nume_joc || 'Jucător'}</div>
+                    </td>
+                    <td>
+                        <span style="background: #5865f2; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; font-weight: bold;">
+                            Rank ${m.rank || 1}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span style="color: #f1c40f; font-weight: bold;">${m.zile_factiune || '0 days'}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span style="color: ${fwColor}; font-weight: bold; border: 1px solid ${fwColor}; padding: 2px 8px; border-radius: 4px;">
+                            ${m.FW || 0}/3 FW
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('loading').innerText = "❌ Eroare tehnică la încărcare.";
+    }
+}
+
+loadDashboard();
     </script>
 </body>
 </html>
