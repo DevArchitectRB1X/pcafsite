@@ -2,120 +2,92 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>PCAF - Dashboard Server</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <title>PCAF - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body style="background: #313338; color: white; font-family: sans-serif; padding: 40px;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1 id="db-title">Încărcare server...</h1>
-        <a href="index.html" style="color: #949ba4; text-decoration: none;">← Înapoi la listă</a>
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto;">
+        <h1 id="db-title">Se încarcă...</h1>
+        <a href="index.html" style="color: #949ba4; text-decoration: none; background: #1e1f22; padding: 8px 15px; border-radius: 5px; border: 1px solid #444;">← Înapoi</a>
     </div>
 
-    <hr style="border: 1px solid #444; margin: 20px 0;">
+    <div id="loading" style="text-align: center; margin-top: 50px;">
+        <h3>Se preiau datele din Firebase...</h3>
+    </div>
 
-    <div id="loading">Se descarcă datele din baza de date...</div>
-
-    <div id="content" style="display: none;">
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+    <div id="content" style="display: none; max-width: 1000px; margin: 30px auto auto;">
+        <div style="background: #1e1f22; padding: 25px; border-radius: 10px; border: 1px solid #444;">
+            <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 0;">👥 Evidență Membri (Sortat după Zile)</h3>
             
-            <div style="background: #1e1f22; padding: 20px; border-radius: 8px;">
-                <h3>⚙️ Configurare Facțiune</h3>
-                <div id="config-data"></div>
-            </div>
-
-            <div style="background: #1e1f22; padding: 20px; border-radius: 8px;">
-                <h3>👥 Listă Membri Activi</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="text-align: left; border-bottom: 1px solid #444;">
-                            <th style="padding: 10px;">Nume</th>
-                            <th>Rank</th>
-                            <th>FW</th>
-                        </tr>
-                    </thead>
-                    <tbody id="members-table"></tbody>
-                </table>
-            </div>
-
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <thead>
+                    <tr style="text-align: left; color: #949ba4; border-bottom: 2px solid #2b2d31;">
+                        <th style="padding: 12px;">NUME JUCĂTOR</th>
+                        <th>RANK</th>
+                        <th style="text-align: center;">VECHIME</th>
+                        <th style="text-align: center;">SANCȚIUNI</th>
+                    </tr>
+                </thead>
+                <tbody id="members-table"></tbody>
+            </table>
         </div>
     </div>
 
     <script>
         const serverId = localStorage.getItem('selectedServerId');
-const serverName = localStorage.getItem('selectedServerName');
+        const serverName = localStorage.getItem('selectedServerName');
+        const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
 
-// 1. Verificăm dacă avem un server selectat
-if (!serverId) {
-    window.location.href = 'index.html';
-}
+        if (!serverId) window.location.href = 'index.html';
+        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
 
-document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
+                const data = await response.json();
 
-async function loadDashboard() {
-    const loadingDiv = document.getElementById('loading');
-    const contentDiv = document.getElementById('content');
-    
-    try {
-        // 2. Cerere directă către Firebase (adăugăm .json la finalul URL-ului)
-        const URL_FIREBASE = `https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app/servers/${serverId}.json`;
-        console.log("Se încarcă datele de la:", URL_FIREBASE);
+                if (!data || !data.membri_activi) {
+                    document.getElementById('loading').innerHTML = "❌ Nu s-au găsit date pentru acest server.";
+                    return;
+                }
 
-        const response = await fetch(URL_FIREBASE);
-        // ... codul de fetch anterior ...
-const data = await response.json();
+                // 1. Convertim obiectul în Array
+                const listaMembri = Object.keys(data.membri_activi).map(id => ({
+                    id: id,
+                    ...data.membri_activi[id]
+                }));
 
-if (data && data.membri_activi) {
-    const tableBody = document.getElementById('members-table');
-    tableBody.innerHTML = ''; 
+                // 2. Sortăm numeric (curățăm textul "days")
+                listaMembri.sort((a, b) => {
+                    const cleanDays = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
+                    return cleanDays(b.Zile) - cleanDays(a.Zile);
+                });
 
-    // 1. Transformăm obiectul în Array ca să îl putem sorta
-    const listaMembri = Object.keys(data.membri_activi).map(id => {
-        return {
-            id: id,
-            ...data.membri_activi[id]
-        };
-    });
+                // 3. Afișăm în tabel
+                const table = document.getElementById('members-table');
+                table.innerHTML = '';
+                
+                listaMembri.forEach(m => {
+                    table.innerHTML += `
+                        <tr style="border-bottom: 1px solid #2b2d31;">
+                            <td style="padding: 15px;"><b>${m.nume_joc || 'Necunoscut'}</b></td>
+                            <td><span style="background: #5865f2; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">Rank ${m.rank || 1}</span></td>
+                            <td style="text-align: center; color: #f1c40f; font-weight: bold;">${m.zile_factiune || '0 days'}</td>
+                        </tr>
+                    `;
+                });
 
-    // 2. Sortăm lista după Zile (Descrescător: cei mai vechi primii)
-    // Schimbă (b.Zile - a.Zile) în (a.Zile - b.Zile) dacă vrei invers
-    listaMembri.sort((a, b) => {
-        const zileA = parseInt(a.Zile) || 0;
-        const zileB = parseInt(b.Zile) || 0;
-        return zileB - zileA; 
-    });
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
 
-    // 3. Afișăm membrii sortați
-    listaMembri.forEach(m => {
-        tableBody.innerHTML += `
-            <tr style="border-bottom: 1px solid #2b2d31; transition: 0.2s;" onmouseover="this.style.background='#2b2d31'" onmouseout="this.style.background='transparent'">
-                <td style="padding: 12px;">
-                    <div style="font-weight: bold; color: #fff;">${m.nume_joc || 'Jucător'}</div>
-                </td>
-                <td>
-                    <span style="background: #5865f2; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
-                        Rank ${m.rank || 1}
-                    </span>
-                </td>
-                <td style="text-align: center;">
-                    <b style="color: #f1c40f;">${m.zile_factiune || 0}</b> <small>zile</small>
-                </td>
-            </tr>
-        `;
-    });
-}
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerText = "❌ Eroare la conectarea cu Firebase.";
+            }
+        }
 
-        // Afișăm conținutul
-        loadingDiv.style.display = 'none';
-        contentDiv.style.display = 'block';
-
-    } catch (error) {
-        console.error("Eroare Firebase:", error);
-        loadingDiv.innerHTML = "❌ Eroare la conectarea cu baza de date PCAF.";
-    }
-}
-
-// Pornim încărcarea
-loadDashboard();
+        loadDashboard();
     </script>
 </body>
 </html>
