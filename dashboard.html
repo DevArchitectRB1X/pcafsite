@@ -57,7 +57,7 @@ async function loadDashboard() {
     
     try {
         // 2. Cerere directă către Firebase (adăugăm .json la finalul URL-ului)
-        const URL_FIREBASE = `https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app/${serverId}.json`;
+        const URL_FIREBASE = `https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app/servers/${serverId}.json`;
         console.log("Se încarcă datele de la:", URL_FIREBASE);
 
         const response = await fetch(URL_FIREBASE);
