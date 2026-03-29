@@ -42,60 +42,80 @@
 
     <script>
         const serverId = localStorage.getItem('selectedServerId');
-        const serverName = localStorage.getItem('selectedServerName');
+const serverName = localStorage.getItem('selectedServerName');
 
-        if (!serverId) {
-            window.location.href = 'index.html'; // Siguranță: dacă nu e selectat nimic, trimite înapoi
+// 1. Verificăm dacă avem un server selectat
+if (!serverId) {
+    window.location.href = 'index.html';
+}
+
+document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+
+async function loadDashboard() {
+    const loadingDiv = document.getElementById('loading');
+    const contentDiv = document.getElementById('content');
+    
+    try {
+        // 2. Cerere directă către Firebase (adăugăm .json la finalul URL-ului)
+        const URL_FIREBASE = `https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app/${serverId}.json`;
+        console.log("Se încarcă datele de la:", URL_FIREBASE);
+
+        const response = await fetch(URL_FIREBASE);
+        const data = await response.json();
+
+        // 3. Verificăm dacă serverul există în DB
+        if (!data) {
+            loadingDiv.innerHTML = `
+                <div style="color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c;">
+                    ❌ Serverul <b>${serverName}</b> nu a fost găsit în baza de date PCAF.<br>
+                    <small>Asigură-te că ai folosit <code>/activate</code> pe Discord.</small>
+                </div>`;
+            return;
         }
 
-        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+        // 4. Afișăm Configurația (Conform structurii tale din JSON)
+        const configBox = document.getElementById('config-data');
+        // Folosim optional chaining (?.) pentru a evita erorile dacă un nod lipsește
+        configBox.innerHTML = `
+            <p>🏷️ Tag: <b>${data.Configurare?.Tag || 'Nesetat'}</b></p>
+            <p>👥 Sloturi: <b>${data.Configurare?.MaxMembri || '0'}</b></p>
+            <p>📺 Canal Anunțuri: <span style="color: #5865F2;">#${data.Configurare?.Canale?.Anunturi || 'Nespecificat'}</span></p>
+        `;
 
-        async function loadDashboard() {
-            try {
-                // Fetch direct din Firebase-ul tău folosind ID-ul serverului
-                const response = await fetch(`https://pcaf-7f566-default-rtdb.firebaseio.com/${serverId}.json`);
-                const data = await response.json();
+        // 5. Generăm Tabelul de Membri
+        const tableBody = document.getElementById('members-table');
+        tableBody.innerHTML = ''; // Curățăm tabelul
 
-                if (!data) {
-                    document.getElementById('loading').innerHTML = "❌ Serverul nu este înregistrat în baza de date PCAF.";
-                    return;
-                }
-
-                // 1. Afișăm Configurația
-                const configBox = document.getElementById('config-data');
-                configBox.innerHTML = `
-                    <p>Tag Facțiune: <b>${data.Configurare?.Tag || 'N/A'}</b></p>
-                    <p>Membri Max: <b>${data.Configurare?.MaxMembri || 'N/A'}</b></p>
-                    <p>Lider ID: <code>${data.Configurare?.Roluri?.Lider || 'Nespecificat'}</code></p>
+        if (data.Membri) {
+            // Transformăm obiectul de membri într-o listă pentru a o parcurge
+            Object.keys(data.Membri).forEach(memberId => {
+                const m = data.Membri[memberId];
+                tableBody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #2b2d31;">
+                        <td style="padding: 12px;">${m.Nume || 'Jucător Necunoscut'}</td>
+                        <td>Rank ${m.Rank || '1'}</td>
+                        <td style="color: ${m.FW >= 2 ? '#e74c3c' : '#2ecc71'}; font-weight: bold;">
+                            ${m.FW || 0}/3
+                        </td>
+                    </tr>
                 `;
-
-                // 2. Afișăm Membrii (dacă există nodul Membri în JSON-ul tău)
-                const table = document.getElementById('members-table');
-                if (data.Membri) {
-                    Object.keys(data.Membri).forEach(key => {
-                        const m = data.Membri[key];
-                        table.innerHTML += `
-                            <tr style="border-bottom: 1px solid #2b2d31;">
-                                <td style="padding: 10px;">${m.Nume || key}</td>
-                                <td>Rank ${m.Rank || 1}</td>
-                                <td style="color: #e74c3c;">${m.FW || 0}/3</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    table.innerHTML = "<tr><td colspan='3'>Nu sunt membri înregistrați.</td></tr>";
-                }
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').innerText = "Eroare la comunicarea cu Firebase.";
-            }
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">Niciun membru înregistrat în facțiune.</td></tr>';
         }
 
-        loadDashboard();
+        // Afișăm conținutul
+        loadingDiv.style.display = 'none';
+        contentDiv.style.display = 'block';
+
+    } catch (error) {
+        console.error("Eroare Firebase:", error);
+        loadingDiv.innerHTML = "❌ Eroare la conectarea cu baza de date PCAF.";
+    }
+}
+
+// Pornim încărcarea
+loadDashboard();
     </script>
 </body>
 </html>
