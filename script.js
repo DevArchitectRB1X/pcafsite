@@ -1,9 +1,12 @@
 function loginWithDiscord() {
-    const CLIENT_ID = '1427291236980490404';
-    const REDIRECT_URI = encodeURIComponent(window.location.origin + '/callback');
-    // Cerem acces la identitate și la lista de servere (guilds)
+    const CLIENT_ID = '1427291236980490404'; // Asigură-te că aici e ID-ul tău corect
+    
+    // Folosim exact primul link din lista ta de Redirecționări
+    const REDIRECT_URI = encodeURIComponent('https://pcaf.vercel.app'); 
+    
     const scope = 'identify guilds';
     
+    // Construim URL-ul final
     window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scope}`;
 }
 
