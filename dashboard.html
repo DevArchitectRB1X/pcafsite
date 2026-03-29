@@ -86,10 +86,10 @@ async function loadDashboard() {
         const tableBody = document.getElementById('members-table');
         tableBody.innerHTML = ''; // Curățăm tabelul
 
-        if (data.Membri) {
+        if (data.membri_activi) {
             // Transformăm obiectul de membri într-o listă pentru a o parcurge
-            Object.keys(data.Membri).forEach(memberId => {
-                const m = data.Membri[memberId];
+            Object.keys(data.membri_activi).forEach(memberId => {
+                const m = data.membri_activi[memberId];
                 tableBody.innerHTML += `
                     <tr style="border-bottom: 1px solid #2b2d31;">
                         <td style="padding: 12px;">${m.Nume || 'Jucător Necunoscut'}</td>
