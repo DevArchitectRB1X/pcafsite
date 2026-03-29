@@ -61,48 +61,48 @@ async function loadDashboard() {
         console.log("Se încarcă datele de la:", URL_FIREBASE);
 
         const response = await fetch(URL_FIREBASE);
-        const data = await response.json();
+        // ... codul de fetch anterior ...
+const data = await response.json();
 
-        // 3. Verificăm dacă serverul există în DB
-        if (!data) {
-            loadingDiv.innerHTML = `
-                <div style="color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c;">
-                    ❌ Serverul <b>${serverName}</b> nu a fost găsit în baza de date PCAF.<br>
-                    <small>Asigură-te că ai folosit <code>/activate</code> pe Discord.</small>
-                </div>`;
-            return;
-        }
+if (data && data.membri_activi) {
+    const tableBody = document.getElementById('members-table');
+    tableBody.innerHTML = ''; 
 
-        // 4. Afișăm Configurația (Conform structurii tale din JSON)
-        const configBox = document.getElementById('config-data');
-        // Folosim optional chaining (?.) pentru a evita erorile dacă un nod lipsește
-        configBox.innerHTML = `
-            <p>🏷️ Tag: <b>${data.Configurare?.Tag || 'Nesetat'}</b></p>
-            <p>👥 Sloturi: <b>${data.Configurare?.MaxMembri || '0'}</b></p>
-            <p>📺 Canal Anunțuri: <span style="color: #5865F2;">#${data.Configurare?.Canale?.Anunturi || 'Nespecificat'}</span></p>
+    // 1. Transformăm obiectul în Array ca să îl putem sorta
+    const listaMembri = Object.keys(data.membri_activi).map(id => {
+        return {
+            id: id,
+            ...data.membri_activi[id]
+        };
+    });
+
+    // 2. Sortăm lista după Zile (Descrescător: cei mai vechi primii)
+    // Schimbă (b.Zile - a.Zile) în (a.Zile - b.Zile) dacă vrei invers
+    listaMembri.sort((a, b) => {
+        const zileA = parseInt(a.Zile) || 0;
+        const zileB = parseInt(b.Zile) || 0;
+        return zileB - zileA; 
+    });
+
+    // 3. Afișăm membrii sortați
+    listaMembri.forEach(m => {
+        tableBody.innerHTML += `
+            <tr style="border-bottom: 1px solid #2b2d31; transition: 0.2s;" onmouseover="this.style.background='#2b2d31'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 12px;">
+                    <div style="font-weight: bold; color: #fff;">${m.nume_joc || 'Jucător'}</div>
+                </td>
+                <td>
+                    <span style="background: #5865f2; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
+                        Rank ${m.rank || 1}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <b style="color: #f1c40f;">${m.zile_factiune || 0}</b> <small>zile</small>
+                </td>
+            </tr>
         `;
-
-        // 5. Generăm Tabelul de Membri
-        const tableBody = document.getElementById('members-table');
-        tableBody.innerHTML = ''; // Curățăm tabelul
-
-        if (data.membri_activi) {
-            // Transformăm obiectul de membri într-o listă pentru a o parcurge
-            Object.keys(data.membri_activi).forEach(memberId => {
-                const m = data.membri_activi[memberId];
-                tableBody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #2b2d31;">
-                        <td style="padding: 12px;">${m.nume_joc || 'Jucător Necunoscut'}</td>
-                        <td>Rank ${m.rank || '1'}</td>
-                        <td style="color: ${m.FW >= 2 ? '#e74c3c' : '#2ecc71'}; font-weight: bold;">
-                            ${m.FW || 0}/3
-                        </td>
-                    </tr>
-                `;
-            });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">Niciun membru înregistrat în facțiune.</td></tr>';
-        }
+    });
+}
 
         // Afișăm conținutul
         loadingDiv.style.display = 'none';
