@@ -3,129 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <title>PCAF - Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body style="background: #313338; color: white; font-family: sans-serif; padding: 40px;">
+    <style>
+        body { background: #313338; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .back-btn { color: #949ba4; text-decoration: none; background: #1e1f22; padding: 8px 15px; border-radius: 5px; border: 1px solid #444; transition: 0.3s; }
+        .back-btn:hover { background: #2b2d31; color: white; }
+        .card { background: #1e1f22; padding: 25px; border-radius: 10px; border: 1px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: #949ba4; border-bottom: 2px solid #2b2d31; padding: 12px; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #2b2d31; }
+        .rank-badge { background: #5865f2; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; font-weight: bold; }
+        .fw-badge { padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; border: 1px solid; }
+        .days-text { color: #f1c40f; font-weight: bold; }
+        #loading { text-align: center; margin-top: 100px; font-size: 1.2rem; color: #b5bac1; }
+    </style></head>
+<body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto;">
-        <h1 id="db-title">Se încarcă...</h1>
-        <a href="index.html" style="color: #949ba4; text-decoration: none; background: #1e1f22; padding: 8px 15px; border-radius: 5px; border: 1px solid #444;">← Înapoi</a>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1 id="db-title">Se încarcă...</h1>
+            <a href="index.html" class="back-btn">← Înapoi la servere</a>
+        </div>
 
-    <div id="loading" style="text-align: center; margin-top: 50px;">
-        <h3>Se preiau datele din Firebase...</h3>
-    </div>
+        <div id="loading">🔍 Căutăm datele în baza de date PCAF...</div>
 
-    <div id="content" style="display: none; max-width: 1000px; margin: 30px auto auto;">
-        <div style="background: #1e1f22; padding: 25px; border-radius: 10px; border: 1px solid #444;">
-            <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 0;">👥 Evidență Membri (Sortat după Zile)</h3>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                <thead>
-                    <tr style="text-align: left; color: #949ba4; border-bottom: 2px solid #2b2d31;">
-                        <th style="padding: 12px;">NUME JUCĂTOR</th>
-                        <th>RANK</th>
-                        <th style="text-align: center;">VECHIME</th>
-                        <th style="text-align: center;">SANCȚIUNI</th>
-                    </tr>
-                </thead>
-                <tbody id="members-table"></tbody>
-            </table>
+        <div id="content" style="display: none;">
+            <div class="card">
+                <h3>👥 Evidență Membri (Sortat: Rank & Zile)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Membru</th>
+                            <th>Grad / Rank</th>
+                            <th style="text-align: center;">Vechime</th>
+                            <th style="text-align: center;">Sancțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="members-table"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
         const serverId = localStorage.getItem('selectedServerId');
-const serverName = localStorage.getItem('selectedServerName');
-const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
+        const serverName = localStorage.getItem('selectedServerName');
+        // URL-ul tău exact din Firebase
+        const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
 
-if (!serverId) window.location.href = 'index.html';
-document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+        if (!serverId) window.location.href = 'index.html';
+        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
 
-async function loadDashboard() {
-    try {
-        const response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
-        let data = await response.json();
+        async function loadDashboard() {
+            try {
+                // Încercăm prima dată în nodul /servers/ID (cum e în JSON-ul tău)
+                let response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
+                let data = await response.json();
 
-        // Dacă datele nu sunt direct în rădăcină, verificăm sub-nodul 'servers'
-        if (!data) {
-            const retry = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
-            data = await retry.json();
-        }
+                // Dacă nu găsește, încercăm direct pe /ID
+                if (!data) {
+                    console.log("Nu am găsit în /servers/, încercăm direct...");
+                    response = await fetch(`${FIREBASE_BASE_URL}/${serverId}.json`);
+                    data = await response.json();
+                }
 
-        if (!data || !data.Membri) {
-            document.getElementById('loading').innerHTML = "❌ Nu s-au găsit membri în baza de date.";
-            return;
-        }
+                if (!data || !data.membri_activi) {
+                    document.getElementById('loading').innerHTML = `
+                        <div style="background: rgba(231, 76, 60, 0.1); border: 1px solid #e74c3c; padding: 20px; border-radius: 8px;">
+                            ❌ Nu s-au găsit membri pentru ID-ul <b>${serverId}</b>.<br>
+                            <small>Asigură-te că botul a salvat datele sub acest ID în Firebase.</small>
+                        </div>`;
+                    return;
+                }
 
-        // 1. Transformăm obiectul Firebase în Listă
-        const listaMembri = Object.keys(data.Membri).map(id => {
-            return {
-                id: id,
-                ...data.Membri[id]
-            };
-        });
+                // 1. Transformăm obiectul Firebase într-o Listă (Array)
+                const listaMembri = Object.keys(data.membri_activi).map(id => ({
+                    id: id,
+                    ...data.membri_activi[id]
+                }));
 
-        // 2. FUNCȚIA DE SORTARE (Rank + Zile)
-        listaMembri.sort((a, b) => {
-            // Curățăm Zilele (scoatem doar numărul din "13 days")
-            const getZile = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
-            // Curățăm Rank-ul (scoatem doar numărul din "Rank 4")
-            const getRank = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
+                // 2. LOGICA DE SORTARE
+                listaMembri.sort((a, b) => {
+                    // Extragem cifrele din "Rank 4" sau "4"
+                    const getRank = (v) => parseInt(v?.toString().replace(/[^0-9]/g, '')) || 0;
+                    // Extragem cifrele din "13 days" sau "13"
+                    const getZile = (v) => parseInt(v?.toString().replace(/[^0-9]/g, '')) || 0;
 
-            const rankA = getRank(a.rank);
-            const rankB = getRank(b.rank);
-            const zileA = getZile(a.zile_factiune);
-            const zileB = getZile(b.zile_factiune);
+                    const rA = getRank(a.rank);
+                    const rB = getRank(b.rank);
+                    const zA = getZile(a.zile_factiune);
+                    const zB = getZile(b.zile_factiune);
 
-            // PRIORITATE 1: Rank (Cei cu rank mai mare sus)
-            if (rankB !== rankA) {
-                return rankB - rankA;
+                    // Mai întâi după Rank (Descrescător)
+                    if (rB !== rA) return rB - rA;
+                    // Dacă au același rank, după Zile (Descrescător)
+                    return zB - zA;
+                });
+
+                // 3. Generăm rândurile în tabel
+                const table = document.getElementById('members-table');
+                table.innerHTML = '';
+                
+                listaMembri.forEach(m => {
+                    const fw = parseInt(m.FW) || 0;
+                    const fwColor = fw >= 2 ? '#ff4757' : (fw === 1 ? '#ffa502' : '#2ed573');
+                    
+                    table.innerHTML += `
+                        <tr>
+                            <td>
+                                <div style="font-weight: bold;">${m.nume_joc || 'Jucător'}</div>
+                                <div style="font-size: 0.75rem; color: #72767d;">ID: ${m.id}</div>
+                            </td>
+                            <td><span class="rank-badge">Rank ${m.rank || 1}</span></td>
+                            <td style="text-align: center;"><span class="days-text">${m.zile_factiune || '0 days'}</span></td>
+                            <td style="text-align: center;">
+                                <span class="fw-badge" style="color: ${fwColor}; border-color: ${fwColor};">
+                                    ${fw}/3 FW
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+            } catch (err) {
+                console.error("Eroare:", err);
+                document.getElementById('loading').innerText = "❌ Eroare tehnică la conectarea cu Firebase.";
             }
-            // PRIORITATE 2: Zile (Dacă au același rank, cel mai vechi e sus)
-            return zileB - zileA;
-        });
+        }
 
-        // 3. Afișare în Tabel
-        const table = document.getElementById('members-table');
-        table.innerHTML = '';
-        
-        listaMembri.forEach(m => {
-            // Calculăm culoarea în funcție de FW
-            const fwColor = m.FW >= 2 ? '#ff4757' : (m.FW == 1 ? '#ffa502' : '#2ed573');
-            
-            table.innerHTML += `
-                <tr style="border-bottom: 1px solid #2b2d31; height: 60px;">
-                    <td style="padding: 10px;">
-                        <div style="font-weight: bold; color: white;">${m.nume_joc || 'Jucător'}</div>
-                    </td>
-                    <td>
-                        <span style="background: #5865f2; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; font-weight: bold;">
-                            Rank ${m.rank || 1}
-                        </span>
-                    </td>
-                    <td style="text-align: center;">
-                        <span style="color: #f1c40f; font-weight: bold;">${m.zile_factiune || '0 days'}</span>
-                    </td>
-                    <td style="text-align: center;">
-                        <span style="color: ${fwColor}; font-weight: bold; border: 1px solid ${fwColor}; padding: 2px 8px; border-radius: 4px;">
-                            ${m.FW || 0}/3 FW
-                        </span>
-                    </td>
-                </tr>
-            `;
-        });
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById('loading').innerText = "❌ Eroare tehnică la încărcare.";
-    }
-}
-
-loadDashboard();
+        loadDashboard();
     </script>
 </body>
 </html>
