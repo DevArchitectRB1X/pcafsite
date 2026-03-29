@@ -73,10 +73,10 @@ async function loadDashboard() {
             // Curățăm Rank-ul (scoatem doar numărul din "Rank 4")
             const getRank = (val) => parseInt(val?.toString().replace(/[^0-9]/g, '')) || 0;
 
-            const rankA = getRank(a.Rank);
-            const rankB = getRank(b.Rank);
-            const zileA = getZile(a.Zile);
-            const zileB = getZile(b.Zile);
+            const rankA = getRank(a.rank);
+            const rankB = getRank(b.rank);
+            const zileA = getZile(a.zile_factiune);
+            const zileB = getZile(b.zile_factiune);
 
             // PRIORITATE 1: Rank (Cei cu rank mai mare sus)
             if (rankB !== rankA) {
