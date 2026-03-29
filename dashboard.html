@@ -92,8 +92,8 @@ async function loadDashboard() {
                 const m = data.membri_activi[memberId];
                 tableBody.innerHTML += `
                     <tr style="border-bottom: 1px solid #2b2d31;">
-                        <td style="padding: 12px;">${m.Nume || 'Jucător Necunoscut'}</td>
-                        <td>Rank ${m.Rank || '1'}</td>
+                        <td style="padding: 12px;">${m.nume_joc || 'Jucător Necunoscut'}</td>
+                        <td>Rank ${m.rank || '1'}</td>
                         <td style="color: ${m.FW >= 2 ? '#e74c3c' : '#2ecc71'}; font-weight: bold;">
                             ${m.FW || 0}/3
                         </td>
