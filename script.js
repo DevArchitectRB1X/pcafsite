@@ -1,63 +1,83 @@
+// 1. Funcția de Login
 function loginWithDiscord() {
-    const CLIENT_ID = '1427291236980490404'; // Asigură-te că aici e ID-ul tău corect
-    
-    // Folosim exact primul link din lista ta de Redirecționări
+    const CLIENT_ID = '1427291236980490404'; 
     const REDIRECT_URI = encodeURIComponent('https://pcaf.vercel.app'); 
-    
     const scope = 'identify guilds';
     
-    // Construim URL-ul final
+    // Redirect către Discord
     window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scope}`;
 }
 
-async function selectServer(serverId, serverName) {
-    // 1. Salvăm ID-ul și Numele serverului în memoria browserului
-    localStorage.setItem('selectedServerId', serverId);
-    localStorage.setItem('selectedServerName', serverName);
+// 2. Atașare Event pe buton (asigură-te că butonul are id="btn-discord-login")
+document.getElementById('btn-discord-login')?.addEventListener('click', loginWithDiscord);
 
-    // 2. Redirecționăm către noua pagină
-    window.location.href = 'dashboard.html';
-}
-
-// Asigură-te că în fetchGuilds ai:
-// card.onclick = () => selectServer(guild.id, guild.name);
-
-// Verificăm dacă ne-am întors din login cu un token în URL
-window.onload = () => {
+// 3. Logica de verificare a Token-ului (Rulează imediat ce se încarcă pagina)
+window.addEventListener('DOMContentLoaded', () => {
+    // Verificăm dacă avem fragmentul cu access_token în URL
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     const accessToken = fragment.get('access_token');
 
     if (accessToken) {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('guilds-container').style.display = 'block';
+        console.log("Token găsit! Încărcăm serverele...");
+        
+        // Ascundem butonul de login și arătăm containerul de servere
+        const loginContainer = document.getElementById('login-container');
+        const guildsContainer = document.getElementById('guilds-container');
+        
+        if (loginContainer) loginContainer.style.display = 'none';
+        if (guildsContainer) guildsContainer.style.display = 'block';
+
+        // Curățăm URL-ul (opțional, dar arată mai bine)
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Chemăm funcția de fetch
         fetchGuilds(accessToken);
     }
-};
+});
 
+// 4. Funcția care trage serverele de la Discord
 async function fetchGuilds(token) {
-    const response = await fetch('https://discord.com/api/users/@me/guilds', {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    const guilds = await response.json();
-    const list = document.getElementById('guilds-list');
-    card.onclick = () => selectServer(guild.id, guild.name);
+    try {
+        const response = await fetch('https://discord.com/api/users/@me/guilds', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-    guilds.forEach(guild => {
-        // Filtrăm serverele unde utilizatorul are permisiuni de admin (0x8)
-        if ((guild.permissions & 0x8) === 0x8) {
-            const icon = guild.icon 
-                ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
-                : 'https://archive.org/download/discord-v2-3-logo-svg/discord-v2-3-logo-svg.png';
-            
-            list.innerHTML += `
-                <div class="guild-card">
-                    <img src="${icon}" class="guild-icon">
-                    <div>
-                        <strong style="display: block;">${guild.name}</strong>
-                        <small style="color: #2ecc71;">Lider / Admin</small>
-                    </div>
-                </div>
-            `;
-        }
-    });
+        if (!response.ok) throw new Error("Eroare la Discord API");
+
+        const guilds = await response.json();
+        const list = document.getElementById('guilds-list');
+        
+        if (!list) return;
+        list.innerHTML = ''; 
+
+        guilds.forEach(guild => {
+            // Permisiunea 0x8 este ADMINISTRATOR
+            if ((guild.permissions & 0x8) === 0x8) {
+                const icon = guild.icon 
+                    ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                const card = document.createElement('div');
+                card.className = 'guild-card'; // Folosește stilul tău CSS
+                card.style.cssText = "background: #1e1f22; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; cursor: pointer; border: 1px solid #444; margin-bottom: 10px;";
+                
+                card.innerHTML = `
+                    <img src="${icon}" style="width: 40px; height: 40px; border-radius: 50%;">
+                    <strong>${guild.name}</strong>
+                `;
+                
+                // Când dă click, salvează și trimite la Dashboard
+                card.onclick = () => {
+                    localStorage.setItem('selectedServerId', guild.id);
+                    localStorage.setItem('selectedServerName', guild.name);
+                    window.location.href = 'dashboard.html';
+                };
+                
+                list.appendChild(card);
+            }
+        });
+    } catch (err) {
+        console.error("Eroare fetchGuilds:", err);
+        alert("S-a produs o eroare la încărcarea serverelor. Verifică Consola (F12).");
+    }
 }
