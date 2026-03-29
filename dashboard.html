@@ -49,7 +49,7 @@ async function loadDashboard() {
 
         // Dacă datele nu sunt direct în rădăcină, verificăm sub-nodul 'servers'
         if (!data) {
-            const retry = await fetch(`${FIREBASE_BASE_URL}/${serverId}.json`);
+            const retry = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
             data = await retry.json();
         }
 
