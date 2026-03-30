@@ -106,29 +106,48 @@
         document.getElementById(id).classList.add('active');
     }
 
-    function checkAccessCode() {
+    if (localStorage.getItem('pcaf_auth') === 'true') {
+        document.getElementById('site-blocker').style.display = 'none';
+    }
+
+    async function checkAccessCode() {
         const input = document.getElementById('access-code-input').value;
         const errorMsg = document.getElementById('error-msg');
-        const blocker = document.getElementById('site-blocker');
-        
-        // CODUL TĂU DE ACCES
-        const COD_CORECT = "IFHASFB;nfao;inN;FIWSH343IW324fbwskkINIKFBHwws2243342khb42ikfshaibk234fgab;fjiwg535hF342IHO;FBfhb;ohujEglo;obn;O;UWGBO:EBUoGuioho:uo;gbuowbe;OB"; 
 
-        if (input === COD_CORECT) {
-            // Doar ascundem div-ul, nu salvăm nimic în memorie
-            blocker.style.display = 'none';
+        // Transformăm ce a scris utilizatorul într-un cod de tip Hash
+        const encoder = new TextEncoder();
+        const data = encoder.encode(input);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        
+        // Acesta este rezultatul criptării
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // "Zidul" de securitate - Amprenta pentru PCAF2026
+        // Chiar dacă vede asta, nu are cum să dea "decriptează" înapoi la text
+        const SECRET_HASH = "80f84501a357f00e99882a6e92782e44383637255959141b6582498774773821";
+
+        if (hashHex === SECRET_HASH) {
+            localStorage.setItem('pcaf_auth', 'true'); // Salvează accesul
+            document.getElementById('site-blocker').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('site-blocker').style.display = 'none';
+            }, 300);
         } else {
+            // Cod greșit
             errorMsg.style.display = 'block';
-            document.getElementById('access-code-input').value = '';
-            document.getElementById('access-code-input').style.borderColor = '#ff4757';
+            const el = document.getElementById('access-code-input');
+            el.value = '';
+            el.style.border = '2px solid #ff4757';
+            // Mic efect de tremurat (opțional)
+            el.style.transform = 'translateX(5px)';
+            setTimeout(() => el.style.transform = 'translateX(0)', 100);
         }
     }
 
-    // Permite ENTER pentru deblocare
+    // Ascultă tasta ENTER
     document.getElementById('access-code-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            checkAccessCode();
-        }
+        if (e.key === 'Enter') checkAccessCode();
     });
 
 </script>
