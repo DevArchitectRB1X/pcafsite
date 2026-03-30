@@ -2,42 +2,64 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>PCAF - Dashboard</title>
+    <title>PCAF - Dashboard Pro</title>
     <style>
-        body { background: #313338; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .back-btn { color: #949ba4; text-decoration: none; background: #1e1f22; padding: 8px 15px; border-radius: 5px; border: 1px solid #444; transition: 0.3s; }
-        .back-btn:hover { background: #2b2d31; color: white; }
-        .card { background: #1e1f22; padding: 25px; border-radius: 10px; border: 1px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; color: #949ba4; border-bottom: 2px solid #2b2d31; padding: 12px; font-size: 0.85rem; text-transform: uppercase; }
+        :root { --red-main: #ff4757; --bg-dark: #313338; --card-bg: #1e1f22; --text-gray: #b5bac1; }
+        body { background: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
+        
+        /* SIDEBAR STIL SCHITA TA */
+        .sidebar { width: 260px; background: #111214; display: flex; flex-direction: column; padding: 20px; border-right: 1px solid #2b2d31; }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; color: var(--red-main); text-align: center; }
+        .nav-btn { 
+            background: transparent; color: white; border: 1px solid var(--red-main); 
+            padding: 12px; margin-bottom: 10px; border-radius: 5px; cursor: pointer; 
+            text-align: left; font-weight: bold; transition: 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active { background: var(--red-main); color: white; }
+
+        /* CONTINUT PRINCIPAL */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 10px; border: 1px solid #444; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--text-gray); border-bottom: 2px solid #2b2d31; padding: 12px; }
         td { padding: 15px; border-bottom: 1px solid #2b2d31; }
-        .rank-badge { background: #5865f2; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; font-weight: bold; }
-        .fw-badge { padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; border: 1px solid; }
-        .days-text { color: #f1c40f; font-weight: bold; }
-        #loading { text-align: center; margin-top: 100px; font-size: 1.2rem; color: #b5bac1; }
-    </style></head>
+
+        .btn-edit { background: #ffa502; color: black; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* MODAL PENTRU EDITARE */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: var(--card-bg); margin: 10% auto; padding: 30px; width: 400px; border-radius: 10px; border: 1px solid var(--red-main); }
+        .modal-content input { width: 100%; padding: 10px; margin: 10px 0; background: #2b2d31; border: 1px solid #444; color: white; border-radius: 5px; }
+        .save-btn { background: var(--red-main); color: white; border: none; padding: 10px 20px; width: 100%; cursor: pointer; font-weight: bold; border-radius: 5px; }
+    </style>
+</head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1 id="db-title">Se încarcă...</h1>
-            <a href="index.html" class="back-btn">← Înapoi la servere</a>
+    <div class="sidebar">
+        <h2 id="server-name-title">SERVER NAME</h2>
+        <button class="nav-btn active">👥 Membri</button>
+        <button class="nav-btn">⚙️ Configurare</button>
+        <button class="nav-btn">📜 Loguri</button>
+        <button class="nav-btn">📊 Statistici</button>
+        <div style="margin-top: auto;">
+            <a href="index.html" style="color: var(--text-gray); text-decoration: none; font-size: 0.9rem;">← Schimbă Serverul</a>
         </div>
+    </div>
 
-        <div id="loading">🔍 Căutăm datele în baza de date PCAF...</div>
-
-        <div id="content" style="display: none;">
+    <div class="main-content">
+        <div id="loading">Se încarcă datele...</div>
+        
+        <div id="dashboard-view" style="display: none;">
             <div class="card">
-                <h3>👥 Evidență Membri (Sortat: Rank & Zile)</h3>
+                <h3 style="margin-top:0">Gestionare Membri</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>Membru</th>
-                            <th>Grad / Rank</th>
-                            <th style="text-align: center;">Vechime</th>
-                            <th style="text-align: center;">Sancțiuni</th>
+                            <th>Jucător</th>
+                            <th>Rank</th>
+                            <th>Vechime</th>
+                            <th>Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody id="members-table"></tbody>
@@ -46,96 +68,93 @@
         </div>
     </div>
 
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3 id="edit-title">Editează Jucător</h3>
+            <input type="hidden" id="edit-id">
+            <label>Nume Jucător:</label>
+            <input type="text" id="edit-nume">
+            <label>Rank (Număr):</label>
+            <input type="number" id="edit-rank">
+            <label>Zile (ex: 10 days):</label>
+            <input type="text" id="edit-zile">
+            <button class="save-btn" onclick="saveChanges()">Salvează în Firebase</button>
+            <button style="background:transparent; color:gray; border:none; width:100%; margin-top:10px; cursor:pointer;" onclick="closeModal()">Anulează</button>
+        </div>
+    </div>
+
     <script>
         const serverId = localStorage.getItem('selectedServerId');
         const serverName = localStorage.getItem('selectedServerName');
-        // URL-ul tău exact din Firebase
-        const FIREBASE_BASE_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
+        const FB_URL = "https://pcaf-7f566-default-rtdb.europe-west1.firebasedatabase.app";
 
-        if (!serverId) window.location.href = 'index.html';
-        document.getElementById('db-title').innerText = `📊 Dashboard: ${serverName}`;
+        document.getElementById('server-name-title').innerText = serverName || "Dashboard";
 
-        async function loadDashboard() {
+        async function loadData() {
             try {
-                // Încercăm prima dată în nodul /servers/ID (cum e în JSON-ul tău)
-                let response = await fetch(`${FIREBASE_BASE_URL}/servers/${serverId}.json`);
-                let data = await response.json();
+                const res = await fetch(`${FB_URL}/servers/${serverId}.json`);
+                const data = await res.json();
+                if(!data || !data.membri_activi) return;
 
-                // Dacă nu găsește, încercăm direct pe /ID
-                if (!data) {
-                    console.log("Nu am găsit în /servers/, încercăm direct...");
-                    response = await fetch(`${FIREBASE_BASE_URL}/${serverId}.json`);
-                    data = await response.json();
-                }
-
-                if (!data || !data.membri_activi) {
-                    document.getElementById('loading').innerHTML = `
-                        <div style="background: rgba(231, 76, 60, 0.1); border: 1px solid #e74c3c; padding: 20px; border-radius: 8px;">
-                            ❌ Nu s-au găsit membri pentru ID-ul <b>${serverId}</b>.<br>
-                            <small>Asigură-te că botul a salvat datele sub acest ID în Firebase.</small>
-                        </div>`;
-                    return;
-                }
-
-                // 1. Transformăm obiectul Firebase într-o Listă (Array)
-                const listaMembri = Object.keys(data.membri_activi).map(id => ({
-                    id: id,
-                    ...data.membri_activi[id]
-                }));
-
-                // 2. LOGICA DE SORTARE
-                listaMembri.sort((a, b) => {
-                    // Extragem cifrele din "Rank 4" sau "4"
-                    const getRank = (v) => parseInt(v?.toString().replace(/[^0-9]/g, '')) || 0;
-                    // Extragem cifrele din "13 days" sau "13"
-                    const getZile = (v) => parseInt(v?.toString().replace(/[^0-9]/g, '')) || 0;
-
-                    const rA = getRank(a.rank);
-                    const rB = getRank(b.rank);
-                    const zA = getZile(a.zile_factiune);
-                    const zB = getZile(b.zile_factiune);
-
-                    // Mai întâi după Rank (Descrescător)
-                    if (rB !== rA) return rB - rA;
-                    // Dacă au același rank, după Zile (Descrescător)
-                    return zB - zA;
-                });
-
-                // 3. Generăm rândurile în tabel
                 const table = document.getElementById('members-table');
                 table.innerHTML = '';
-                
-                listaMembri.forEach(m => {
-                    const fw = parseInt(m.FW) || 0;
-                    const fwColor = fw >= 2 ? '#ff4757' : (fw === 1 ? '#ffa502' : '#2ed573');
-                    
+
+                // Sortare (ca data trecută)
+                const membriArr = Object.keys(data.membri_activi).map(id => ({ id, ...data.membri_activi[id] }));
+                membriArr.sort((a,b) => (parseInt(b.Rank) || 0) - (parseInt(a.Rank) || 0));
+
+                membriArr.forEach(m => {
                     table.innerHTML += `
                         <tr>
-                            <td>
-                                <div style="font-weight: bold;">${m.nume_joc || 'Jucător'}</div>
-                                <div style="font-size: 0.75rem; color: #72767d;">ID: ${m.id}</div>
-                            </td>
-                            <td><span class="rank-badge">Rank ${m.rank || 1}</span></td>
-                            <td style="text-align: center;"><span class="days-text">${m.zile_factiune || '0 days'}</span></td>
-                            <td style="text-align: center;">
-                                <span class="fw-badge" style="color: ${fwColor}; border-color: ${fwColor};">
-                                    ${fw}/3 FW
-                                </span>
-                            </td>
-                        </tr>
-                    `;
+                            <td><b>${m.nume_joc}</b><br><small style="color:gray">${m.id}</small></td>
+                            <td>Rank ${m.rank}</td>
+                            <td>${m.zile_factiune}</td>
+                            // <td>${m.FW}/3</td>
+                            <td><button class="btn-edit" onclick="openEdit('${m.nume_joc}', '${m.rank}', '${m.zile_factiune}')">Edit</button></td>
+                        </tr>`;
                 });
-
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+                document.getElementById('dashboard-view').style.display = 'block';
+            } catch (e) { console.error(e); }
+        }
 
-            } catch (err) {
-                console.error("Eroare:", err);
-                document.getElementById('loading').innerText = "❌ Eroare tehnică la conectarea cu Firebase.";
+        // FUNCTII EDITARE
+        function openEdit(nume_joc, rank, zile_factiune) {
+            // document.getElementById('edit-id').value = id;
+            document.getElementById('edit-nume').value = nume_joc;
+            document.getElementById('edit-rank').value = rank;
+            document.getElementById('edit-zile').value = zile_factiune;
+           //  document.getElementById('edit-fw').value = fw;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        async function saveChanges() {
+            // const id = document.getElementById('edit-id').value;
+            const updatedData = {
+                Nume: document.getElementById('edit-nume').value,
+                Rank: document.getElementById('edit-rank').value,
+                Zile: document.getElementById('edit-zile').value,
+                // FW: document.getElementById('edit-fw').value
+            };
+
+            // Trimitere către Firebase (PATCH updatează doar câmpurile trimise)
+            const res = await fetch(`${FB_URL}/servers/${serverId}/membri_activi/${id}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify(updatedData)
+            });
+
+            if(res.ok) {
+                alert("Salvat cu succes!");
+                closeModal();
+                loadData(); // Reîncărcăm tabelul
+            } else {
+                alert("Eroare la salvare!");
             }
         }
 
-        loadDashboard();
+        loadData();
     </script>
 </body>
 </html>
