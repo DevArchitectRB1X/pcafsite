@@ -737,9 +737,10 @@
 
 </div>
 <script>
-    // 1. Verificăm dacă utilizatorul a introdus deja codul în această sesiune
+    // Verificăm dacă utilizatorul a deblocat deja site-ul în această sesiune
     window.addEventListener('DOMContentLoaded', () => {
-        if (sessionStorage.getItem('pcaf_access') === 'granted') {
+        const isUnlocked = sessionStorage.getItem('pcaf_access');
+        if (isUnlocked === 'granted') {
             document.getElementById('site-blocker').style.display = 'none';
         }
     });
@@ -748,28 +749,30 @@
         const input = document.getElementById('access-code-input').value;
         const errorMsg = document.getElementById('error-msg');
         
-        // AICI SCHIMBI CODUL TĂU DE ACCES234
+        // CODUL TAU DE ACCES (Modifică-l aici)
         const COD_CORECT = "IFHASFB;nfao;inN;FIWSH343IW324fbwskkINIKFBHwws2243342khb42ikfshaibk234fgab;fjiwg535hF342IHO;FBfhb;ohujEglo;obn;O;UWGBO:EBUoGuioho:uo;gbuowbe;OB"; 
 
         if (input === COD_CORECT) {
-            // Salvăm accesul pentru această sesiune
+            // Salvăm accesul în sesiune
             sessionStorage.setItem('pcaf_access', 'granted');
             
-            // Ascundem blocker-ul cu o mică animație (opțional)
+            // Ascundem blocker-ul
             document.getElementById('site-blocker').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('site-blocker').style.display = 'none';
             }, 300);
         } else {
-            // Arătăm eroarea
+            // Arătăm mesajul de eroare
             errorMsg.style.display = 'block';
-            document.getElementById('access-code-input').value = '';
-            document.getElementById('access-code-input').style.borderColor = '#ff4757';
+            const inputField = document.getElementById('access-code-input');
+            inputField.value = '';
+            inputField.style.borderColor = '#ff4757';
+            inputField.focus();
         }
     }
 
-    // Permite apăsarea tastei ENTER pentru deblocare
-    document.getElementById('access-code-input')?.addEventListener('keypress', function (e) {
+    // Permite apăsarea tastei ENTER
+    document.getElementById('access-code-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             checkAccessCode();
         }
