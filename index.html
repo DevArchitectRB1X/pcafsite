@@ -17,7 +17,18 @@
     </style>
 </head>
 <body>
-
+<div id="site-blocker" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111214; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: sans-serif;">
+    <h1 style="color: #ff4757; margin-bottom: 20px;">🛡️ ACCES RESTRICȚIONAT</h1>
+    <p style="color: #b5bac1; margin-bottom: 20px;">Introdu codul de acces PCAF pentru a continua:</p>
+    
+    <div style="display: flex; gap: 10px;">
+        <input type="password" id="access-code-input" placeholder="Cod de acces..." style="padding: 12px; border-radius: 5px; border: 1px solid #444; background: #1e1f22; color: white; outline: none; width: 200px;">
+        <button onclick="checkAccessCode()" style="background: #ff4757; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            DEBLOCHEAZĂ
+        </button>
+    </div>
+    <p id="error-msg" style="color: #ff4757; margin-top: 15px; display: none;">❌ Cod incorect! Contactează un Administrator.</p>
+</div>
 <nav>
     <a href="#" onclick="showSection('home')" style="color: white; text-decoration: none;">Home</a>
     <a href="#" onclick="showSection('blog')" style="color: white; text-decoration: none;">Blog</a>
@@ -94,6 +105,32 @@
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
+
+    function checkAccessCode() {
+        const input = document.getElementById('access-code-input').value;
+        const errorMsg = document.getElementById('error-msg');
+        const blocker = document.getElementById('site-blocker');
+        
+        // CODUL TĂU DE ACCES
+        const COD_CORECT = "IFHASFB;nfao;inN;FIWSH343IW324fbwskkINIKFBHwws2243342khb42ikfshaibk234fgab;fjiwg535hF342IHO;FBfhb;ohujEglo;obn;O;UWGBO:EBUoGuioho:uo;gbuowbe;OB"; 
+
+        if (input === COD_CORECT) {
+            // Doar ascundem div-ul, nu salvăm nimic în memorie
+            blocker.style.display = 'none';
+        } else {
+            errorMsg.style.display = 'block';
+            document.getElementById('access-code-input').value = '';
+            document.getElementById('access-code-input').style.borderColor = '#ff4757';
+        }
+    }
+
+    // Permite ENTER pentru deblocare
+    document.getElementById('access-code-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkAccessCode();
+        }
+    });
+
 </script>
 
 </body>
