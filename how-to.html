@@ -730,6 +730,7 @@
             💡 <b>Informație pentru Lideri:</b> Acest sistem este activ 24/7 și protejează facțiunea chiar și atunci când nu există staff online. Baza de date cu keywords este actualizată constant de către <b>DevArchitect</b> pentru a include cele mai noi metode de scam.
         </p>
     </div>
+</div>
 
     <br>
     <a href="#top" class="back-to-top">↑ Înapoi la cuprins</a>
@@ -737,32 +738,36 @@
 
 </div>
 <script>
-    // Verificăm dacă utilizatorul a deblocat deja site-ul în această sesiune
+    // 1. Verificăm la încărcare dacă utilizatorul a introdus deja codul corect
     window.addEventListener('DOMContentLoaded', () => {
-        const isUnlocked = sessionStorage.getItem('pcaf_access');
-        if (isUnlocked === 'granted') {
+        const accesAutorizat = sessionStorage.getItem('pcaf_access_granted');
+        if (accesAutorizat === 'true') {
             document.getElementById('site-blocker').style.display = 'none';
         }
     });
 
+    // 2. Funcția de verificare a codului
     function checkAccessCode() {
         const input = document.getElementById('access-code-input').value;
         const errorMsg = document.getElementById('error-msg');
         
-        // CODUL TAU DE ACCES (Modifică-l aici)
-        const COD_CORECT = "IFHASFB;nfao;inN;FIWSH343IW324fbwskkINIKFBHwws2243342khb42ikfshaibk234fgab;fjiwg535hF342IHO;FBfhb;ohujEglo;obn;O;UWGBO:EBUoGuioho:uo;gbuowbe;OB"; 
+        // AICI SCHIMBI CODUL TĂU DE ACCES
+        const COD_CORECT = "PCAF2026"; 
 
         if (input === COD_CORECT) {
-            // Salvăm accesul în sesiune
-            sessionStorage.setItem('pcaf_access', 'granted');
+            // Salvăm faptul că utilizatorul a trecut de barieră pentru această sesiune
+            sessionStorage.setItem('pcaf_access_granted', 'true');
             
-            // Ascundem blocker-ul
-            document.getElementById('site-blocker').style.opacity = '0';
+            // Ascundem blocker-ul cu un efect de dispariție
+            const blocker = document.getElementById('site-blocker');
+            blocker.style.transition = "opacity 0.5s ease";
+            blocker.style.opacity = "0";
+            
             setTimeout(() => {
-                document.getElementById('site-blocker').style.display = 'none';
-            }, 300);
+                blocker.style.display = 'none';
+            }, 500);
         } else {
-            // Arătăm mesajul de eroare
+            // Dacă greșește codul, arătăm eroarea și scuturăm input-ul
             errorMsg.style.display = 'block';
             const inputField = document.getElementById('access-code-input');
             inputField.value = '';
@@ -771,7 +776,7 @@
         }
     }
 
-    // Permite apăsarea tastei ENTER
+    // 3. Permite deblocarea prin tasta ENTER
     document.getElementById('access-code-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             checkAccessCode();
